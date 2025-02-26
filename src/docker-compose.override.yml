@@ -1,0 +1,215 @@
+version: '3.4'
+
+services:
+  asos_pg:
+    container_name: asos_pg
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=db_catalog
+    restart: always
+    ports:
+      - 5433:5432
+    volumes:
+      - postgres_asos_pg:/var/lib/postgresql/data
+    networks:
+      - asos_network
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: host-queue
+    volumes:
+      - ./.containers/queue/data/:/var/lib/rabbitmq
+      - ./.containers/queue/log/:/var/log/rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - asos_network
+  distributedcache:
+    container_name: distributedcache
+    restart: always
+    ports:
+      - "6380:6379"
+    networks:
+      - asos_network
+  asos_mssql:
+    container_name: asos_mssql
+    environment:
+    - ACCEPT_EULA=Y
+    - SA_PASSWORD=.abcABC123#
+    - MSSQL_DATABASE=asos_mssql
+    restart: always
+    ports:
+      - "1433:1433"
+    networks:
+      - asos_network
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+  basket.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_URLS=https://+:8081
+      - ConnectionStrings__Database=Server=asos_pg;Port=5432;Database=db_basket;Username=postgres;Password=postgres;Include Error Detail=true
+      - HostSettings__Environment=docker
+    ports:
+      - 7003:8081
+    depends_on:
+      - asos_pg
+      - distributedcache
+      - rabbitmq
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - asos_network
+  catalog.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_URLS=https://+:8081
+      - ConnectionStrings__Database=Server=asos_pg;Port=5432;Database=db_catalog;Username=postgres;Password=postgres;Include Error Detail=true
+      - HostSettings__Environment=docker
+    ports:
+      - 7002:8081
+    depends_on:
+      - asos_pg
+      - distributedcache
+      - rabbitmq
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - asos_network
+  ordering.api:
+    # environment:
+    #   - ASPNETCORE_ENVIRONMENT=Development
+    #   - ASPNETCORE_HTTPS_PORTS=8081
+    #   - ASPNETCORE_URLS=https://+:8081
+    #   - ConnectionStrings__Database=Server=asos_pg;Port=5432;Database=db_ordering;Username=postgres;Password=postgres;Include Error Detail=true
+    #   - HostSettings__Environment=docker
+    # ports:
+    #   - 7004:8081
+    # depends_on:
+    #   - asos_pg
+    #   - rabbitmq
+    # volumes:
+    #   - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+    #   - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    # networks:
+    #   - asos_network
+      environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_URLS=https://+:8081
+      - ConnectionStrings__Database=Server=asos_mssql,1433;Database=db_ordering;User Id=sa;Password=.abcABC123#;Encrypt=False;TrustServerCertificate=True
+      - HostSettings__Environment=docker
+      - FeatureManagement__OrderFullfilment=false
+      depends_on:
+      - asos_mssql
+      - rabbitmq
+      ports:
+      - 7004:8081
+      volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+      networks:
+      - asos_network
+  identity.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_URLS=https://+:8081
+      - ConnectionStrings__Database=Server=asos_pg;Port=5432;Database=db_identity;Username=postgres;Password=postgres;Include Error Detail=true
+      - HostSettings__Environment=docker
+    ports:
+      - 7001:8081
+    depends_on:
+      - asos_pg
+      - rabbitmq
+      - distributedcache
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - asos_network
+  promotion.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_URLS=https://+:8081
+      - ConnectionStrings__Database=Server=asos_pg;Port=5432;Database=db_promotion;Username=postgres;Password=postgres;Include Error Detail=true
+      - HostSettings__Environment=docker
+    ports:
+      - 7005:8081
+    depends_on:
+      - asos_pg
+      - rabbitmq
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - asos_network
+  storage.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_URLS=https://+:8081
+      - ConnectionStrings__Database=Server=asos_pg;Port=5432;Database=db_storage;Username=postgres;Password=postgres;Include Error Detail=true
+    ports:
+      - 7007:8081
+    depends_on:
+      - asos_pg
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - asos_network
+  event.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ASPNETCORE_URLS=https://+:8081
+      - ConnectionStrings__Database=Server=asos_pg;Port=5432;Database=db_event;Username=postgres;Password=postgres;Include Error Detail=true
+    ports:
+      - 7006:8081
+    depends_on:
+      - asos_pg
+      - rabbitmq
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - asos_network
+  yarpapigateway:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+    depends_on:
+      - identity.api
+      - catalog.api
+      - basket.api
+      - ordering.api
+      - promotion.api
+      - storage.api
+    ports:
+      - 7070:8080
+      - 7000:8081
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro
+    networks:
+      - asos_network
+
+networks:
+  asos_network:
+    driver: bridge
+
+volumes:
+  postgres_asos_pg:
+  mssql_data:  

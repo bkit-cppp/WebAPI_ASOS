@@ -1,0 +1,94 @@
+version: '3.4'
+
+services:
+  asos_pg:
+    image: postgres
+    networks:
+      - asos_network
+
+  distributedcache:
+    image: redis
+    networks:
+      - asos_network
+
+  rabbitmq:
+    image: rabbitmq:3.11.7-management
+    networks:
+      - asos_network
+
+  basket.api:
+    image: ${DOCKER_REGISTRY-}basketapi
+    build:
+      context: .
+      dockerfile: Services/Basket/Basket.API/Dockerfile
+    networks:
+      - asos_network
+
+  catalog.api:
+    image: ${DOCKER_REGISTRY-}catalogapi
+    build:
+      context: .
+      dockerfile: Services/Catalog/Catalog.API/Dockerfile
+    networks:
+      - asos_network
+
+  ordering.api:
+    image: ${DOCKER_REGISTRY-}orderingapi
+    build:
+      context: .
+      dockerfile: Services/Ordering/Ordering.API/Dockerfile
+    networks:
+      - asos_network
+
+  identity.api:
+    image: ${DOCKER_REGISTRY-}identityapi
+    build:
+      context: .
+      dockerfile: Services/Identity/Identity.API/Dockerfile
+    networks:
+      - asos_network
+
+  promotion.api:
+    image: ${DOCKER_REGISTRY-}promotionapi
+    build:
+      context: .
+      dockerfile: Services/Promotion/Promotion.API/Dockerfile
+    networks:
+      - asos_network
+
+  storage.api:
+    image: ${DOCKER_REGISTRY-}storageapi
+    build:
+      context: .
+      dockerfile: Services/Storage/Storage.API/Dockerfile
+    networks:
+      - asos_network
+
+  event.api:
+    image: ${DOCKER_REGISTRY-}eventapi
+    build:
+      context: .
+      dockerfile: Services/Event/Event.API/Dockerfile
+    networks:
+      - asos_network
+
+  yarpapigateway:
+    image: ${DOCKER_REGISTRY-}yarpapigateway
+    build:
+      context: .
+      dockerfile: ApiGateways/YarpApiGateway/Dockerfile
+    networks:
+      - asos_network
+
+volumes:
+  postgres_asos_pg:
+
+
+
+networks:
+  asos_network:
+    driver: bridge
+
+
+
+

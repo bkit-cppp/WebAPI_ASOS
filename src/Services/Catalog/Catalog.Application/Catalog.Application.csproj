@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Features\ColorFeature\Commands\" />
+    <Folder Include="Features\ProductFeature\Commands\" />
+    <Folder Include="Features\CategoryFeature\Commands\" />
+    <Folder Include="Features\ColorFeature\Commands\" />
+    <Folder Include="Features\ProductFeature\Commands\" />
+    <Folder Include="Features\RatingFeature\Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="EPPlus" Version="7.4.1" />
+    <PackageReference Include="FluentValidation" Version="11.10.0" />
+    <PackageReference Include="Grpc.Core.Api" Version="2.66.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlock.Caching\BuildingBlock.Caching.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlock.Grpc\BuildingBlock.Grpc.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlock.Messaging\BuildingBlock.Messaging.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\BuildingBlock\BuildingBlock.csproj" />
+    <ProjectReference Include="..\Catalog.Domain\Catalog.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

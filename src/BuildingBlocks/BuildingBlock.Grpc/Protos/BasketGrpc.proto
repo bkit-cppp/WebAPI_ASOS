@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+option csharp_namespace = "BuildingBlock.Grpc.Protos";
+
+service BasketGrpc {
+  rpc GetTotal (GetCartTotalRequest) returns (GetCartTotalResponse);
+  rpc GetCart (GetCartRequest) returns (GetCartResponse);
+}
+
+message GetCartTotalRequest {
+  string user = 1;
+}
+
+message GetCartTotalResponse {
+  bool Success = 1;
+  string ErrMessage = 2;
+  double Total = 3;
+}
+
+message CartItem {
+    string productId = 1;
+    string productItemId = 2;
+    string variationId = 3;
+    string slug = 4;
+    string name = 5;
+    string description = 6;
+    string category = 7;
+    string brand = 8;
+    string size = 9;
+    string color = 10;
+    double originalPrice = 11;
+    double salePrice = 12;
+    double additionalPrice = 13;
+    double stock = 14;
+    bool isSale = 15;
+    int32 quantity = 16;
+    string image = 17;
+    double finalPrice = 18;
+}
+
+message GetCartRequest {
+  string user = 1;
+}
+
+message GetCartResponse {
+  bool Success = 1;
+  string ErrMessage = 2;
+  string userId = 3;
+  string discountId = 4;
+  double basePrice = 5;
+  double discountPrice = 6;
+  double subPrice = 7;
+  int32 pointUsed = 8;
+  double total = 9;
+  repeated CartItem items = 10;
+}

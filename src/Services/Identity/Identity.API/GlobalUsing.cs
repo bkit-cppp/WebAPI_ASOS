@@ -1,0 +1,11 @@
+﻿global using Identity.API.Data;
+global using Identity.API.Constants;
+global using BuildingBlock.Core.Result;
+global using BuildingBlock.CQRS;
+global using BuildingBlock.Constants;
+global using AutoMapper;
+global using BuildingBlock.Core.Request;
+global using AutoMapper.QueryableExtensions;
+global using BuildingBlock.Core.Abstractions;
+global using Microsoft.EntityFrameworkCore;
+global using Identity.API.Commons.Validators;

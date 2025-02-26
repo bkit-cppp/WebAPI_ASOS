@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option csharp_namespace = "BuildingBlock.Grpc.Protos";
+
+service IdentityGrpc {
+  rpc GetUser (GetUserRequest) returns (GetUserReply);
+}
+
+message GetUserRequest {
+  string Id = 1;
+}
+
+message GetUserReply {
+  bool Success = 1;
+  string ErrMessage = 2;
+  string Id = 3;
+  string Email = 4;
+  string Phone = 5;
+  string Fullname = 6;
+  string Avatar = 7;
+  string RoleId = 8;
+  string StatusId = 9;
+  int32 Point = 10;
+}

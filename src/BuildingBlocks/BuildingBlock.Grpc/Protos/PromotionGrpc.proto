@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option csharp_namespace = "BuildingBlock.Grpc.Protos";
+
+service PromotionGrpc {
+  rpc GetDiscountById (GetDiscountByIdRequest) returns (GetDiscountReply);
+  rpc GetDiscountByCode (GetDiscountByCodeRequest) returns (GetDiscountReply);
+}
+
+message GetDiscountByIdRequest {
+  string id = 1;
+}
+
+message GetDiscountByCodeRequest {
+  string code = 1;
+}
+
+message GetDiscountReply {
+  bool Success = 1;
+  string ErrMessage = 2;
+  string Id = 3;
+  string Code = 4;
+  double Value = 5;
+  double Minimum = 6;
+  string StartDate = 7;
+  string EndDate = 8;
+  string DiscountTypeId = 9;
+  string DiscountProducts = 10;
+  string Condition = 11;
+  int32 Quantity = 12;
+  bool Available = 13;
+}

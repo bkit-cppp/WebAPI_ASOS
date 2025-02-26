@@ -1,0 +1,11 @@
+﻿global using AutoMapper;
+global using BuildingBlock.Caching.Installers;
+global using BuildingBlock.CQRS;
+global using BuildingBlock.Caching.Services;
+global using Basket.API.Constants;
+global using Basket.API.Utilities;
+global using Newtonsoft.Json;
+global using Basket.API.Models;
+global using FluentValidation;
+global using Basket.API.Interfaces;
+global using Basket.API.Services;
